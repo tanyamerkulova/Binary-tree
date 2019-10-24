@@ -37,6 +37,8 @@ struct tree
 		
 		//функция для find(K) и exist(K)
 		const T* private_find(const K& key) const;
+		void clear();
+		void copy(const tree& Tree);
 		
 	public:
 		tree();
@@ -50,6 +52,7 @@ struct tree
 		bool exist(const K& key) const;
 		int get_size() const;
 		
+		const tree& operator=(const tree& Tree);
 			//оператор возвращает find(key)
 		const T& operator[](const K& key) const;
 			//вывод всех узлов от меньшего к большему

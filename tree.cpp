@@ -10,6 +10,50 @@ _T_ tree<K,T>::tree(): root(nullptr), size(0)
 
 _T_ tree<K,T>::tree(const tree& Tree)
 {
+	this->copy(Tree);
+}
+
+_T_ tree<K,T>::~tree()
+{
+	this->clear();
+}
+
+_T_ void tree<K,T>::clear()
+{
+	if(size)
+	{
+		Node* current = root;
+
+		while(size) //пока в дереве есть элементы
+		{
+			//ищем листья
+			if(current->l_child != nullptr)
+				current = current->l_child;
+				
+			else if(current->r_child != nullptr)
+				current = current->r_child;
+			
+			else //нашли лист
+			{
+				Node*  tmp = current->parent;
+				if(size > 1) //для любых листьев кроме корня
+				{
+					//для родителя этого листа child = nullptr
+					if(tmp->key > current->key)
+						tmp->l_child = nullptr;
+					else
+						tmp->r_child = nullptr;
+				}
+				delete current; //удаляем лист
+				current = tmp; //следующий проверяемый узел - родитель удалённого листа
+				size--;
+			}	
+		}
+	}
+}
+
+_T_ void tree<K,T>::copy(const tree& Tree)
+{
 	size = 0;
 	root = nullptr;
 	if(Tree.size)
@@ -40,40 +84,6 @@ _T_ tree<K,T>::tree(const tree& Tree)
 				current = current->parent;
 				Tcurrent = Tcurrent->parent;
 			}
-		}
-	}
-}
-
-_T_ tree<K,T>::~tree()
-{
-	if(size)
-	{
-		Node* current = root;
-
-		while(size) //пока в дереве есть элементы
-		{
-			//ищем листья
-			if(current->l_child != nullptr)
-				current = current->l_child;
-				
-			else if(current->r_child != nullptr)
-				current = current->r_child;
-			
-			else //нашли лист
-			{
-				Node*  tmp = current->parent;
-				if(size > 1) //для любых листьев кроме корня
-				{
-					//для родителя этого листа child = nullptr
-					if(tmp->key > current->key)
-						tmp->l_child = nullptr;
-					else
-						tmp->r_child = nullptr;
-				}
-				delete current; //удаляем лист
-				current = tmp; //следующий проверяемый узел - родитель удалённого листа
-				size--;
-			}	
 		}
 	}
 }
@@ -264,6 +274,18 @@ _T_ int tree<K,T>::get_size() const
 {
 	
 	return size;
+}
+
+_T_ const tree<K,T>& tree<K,T>::operator=(const tree& Tree)
+{
+	if(this == &Tree)
+		return *this;
+	else
+	{
+		this->clear();
+		this->copy(Tree);
+	}
+	
 }
 
 _T_ const T& tree<K,T>::operator[](const K& key) const
